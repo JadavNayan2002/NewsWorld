@@ -1,0 +1,28 @@
+﻿@{
+    ViewData["Title"] = "Add Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+    <h2>Add Admin User</h2>
+
+    <form asp-action="AddUser" asp-controller="Admin" method="post">
+
+        <div class="mb-3">
+            <label>Username</label>
+            <input name="Username" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label>Password</label>
+            <input name="Password" type="password" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">Add Admin</button>
+
+        @if (ViewBag.Error != null)
+        {
+            <p class="text-danger mt-2">@ViewBag.Error</p>
+        }
+    </form>
+</div>

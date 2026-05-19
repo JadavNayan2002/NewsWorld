@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NewsWorld.Models;
 
-namespace NewsWorld.Data   // ✅ MUST match this
+namespace NewsWorld.Data   
 {
     public class ApplicationDbContext : DbContext
     {

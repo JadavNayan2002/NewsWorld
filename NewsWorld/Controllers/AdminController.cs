@@ -21,7 +21,7 @@ namespace NewsWorld.Controllers
             return View();
         }
 
-        // ✅ POST: Admin/Login
+        // POST: Admin/Login
         [HttpPost]
         public IActionResult Login(string Username, string Password)
         {
@@ -30,11 +30,71 @@ namespace NewsWorld.Controllers
 
             if (admin != null)
             {
-                return RedirectToAction("Index", "Home");
+                HttpContext.Session.SetString("AdminUser", admin.Username);
+                return RedirectToAction("Dashboard","Admin");
             }
 
             ViewBag.Error = "Invalid Username or Password";
             return View();
+        }
+        public IActionResult Dashboard()
+        {
+            var user = HttpContext.Session.GetString("AdminUser");
+
+            if (user == null)
+            {
+                // Not logged in → go to login
+                return RedirectToAction("Login", "Admin");
+            }
+            return View();
+        }
+
+        public IActionResult Index()
+        {
+            var adminUser = HttpContext.Session.GetString("AdminUser");
+
+            if (adminUser != null)
+            {
+                return RedirectToAction("Dashboard");
+            }
+
+            return RedirectToAction("Login");
+        }
+
+        // GET: AdminUser
+        public IActionResult AddUser()
+        {
+            return View();
+        }
+
+        // POST: AdminUser
+        [HttpPost]
+        public IActionResult AddUser(string Username, string Password)
+        {
+            if (!string.IsNullOrEmpty(Username) && !string.IsNullOrEmpty(Password))
+            {
+                var admin = new Admin
+                {
+                    Username = Username,
+                    Password = Password
+                };
+
+                _context.Admins.Add(admin);
+                _context.SaveChanges();
+
+                return RedirectToAction("Dashboard");
+            }
+
+            ViewBag.Error = "All fields are required";
+            return View();
+        }
+        
+        // Logout
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
     }
 }

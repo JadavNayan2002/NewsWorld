@@ -1,0 +1,85 @@
+﻿@using Microsoft.AspNetCore.Http
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var adminUser = Context.Session.GetString("AdminUser");
+}
+
+<div class="container mt-4">
+
+    <!-- Header -->
+    @if (adminUser != null)
+    {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Dashboard</h2>
+
+            <div>
+                <form asp-controller="Admin" asp-action="Logout" method="post" class="d-inline">
+                    <button class="btn btn-danger btn-sm">Logout</button>
+                </form>
+            </div>
+        </div>
+    }
+
+    <!-- Cards -->
+    <div class="row g-4">
+
+        <!-- Add User -->
+        <div class="col-md-3">
+            <div class="card text-white border-0 shadow-lg p-4" style="background: linear-gradient(135deg, #667eea, #764ba2); border-radius:15px;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6>Add User</h6>
+                        <h4 class="fw-bold">Create</h4>
+                    </div>
+                    <i class="bi bi-person-plus-fill fs-1"></i>
+                </div>
+                <a asp-controller="Admin" asp-action="AddUser" class="btn btn-light btn-sm mt-3">Go</a>
+            </div>
+        </div>
+
+        <!-- Add News -->
+        <div class="col-md-3">
+            <div class="card text-white border-0 shadow-lg p-4" style="background: linear-gradient(135deg, #43cea2, #185a9d); border-radius:15px;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6>Add News</h6>
+                        <h4 class="fw-bold">Publish</h4>
+                    </div>
+                    <i class="bi bi-newspaper fs-1"></i>
+                </div>
+                <a asp-controller="News" asp-action="Create" class="btn btn-light btn-sm mt-3">Go</a>
+            </div>
+        </div>
+
+        <!-- Manage Articles -->
+        <div class="col-md-3">
+            <div class="card text-white border-0 shadow-lg p-4" style="background: linear-gradient(135deg, #f7971e, #ffd200); border-radius:15px;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6>Manage Articles</h6>
+                        <h4 class="fw-bold">Edit</h4>
+                    </div>
+                    <i class="bi bi-pencil-square fs-1"></i>
+                </div>
+                <a asp-controller="News" asp-action="Index" class="btn btn-light btn-sm mt-3">Go</a>
+            </div>
+        </div>
+
+        <!-- Delete News -->
+        <div class="col-md-3">
+            <div class="card text-white border-0 shadow-lg p-4" style="background: linear-gradient(135deg, #ff416c, #ff4b2b); border-radius:15px;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h6>Delete News</h6>
+                        <h4 class="fw-bold">Remove</h4>
+                    </div>
+                    <i class="bi bi-trash-fill fs-1"></i>
+                </div>
+                <a asp-controller="News" asp-action="Index" class="btn btn-light btn-sm mt-3">Go</a>
+            </div>
+        </div>
+
+    </div>
+</div>
