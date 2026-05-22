@@ -1,0 +1,236 @@
+﻿@model NewsWorld.Models.News
+
+@{
+    ViewData["Title"] = "Edit News";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">Edit News</h2>
+
+            <p class="text-muted mb-0">
+                Update your news article details
+            </p>
+        </div>
+
+        <a asp-controller="News"
+           asp-action="ManageNews"
+           class="btn btn-outline-dark rounded-pill px-4">
+
+            <i class="bi bi-arrow-left"></i> Back
+
+        </a>
+
+    </div>
+
+    <!-- Card -->
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+        <!-- Card Header -->
+        <div class="bg-dark text-white p-4">
+
+            <h4 class="mb-1 fw-bold">
+                Update News Article
+            </h4>
+
+            <small class="text-light">
+                Edit and save updated news details
+            </small>
+
+        </div>
+
+        <!-- Form -->
+        <div class="card-body p-5">
+
+            <form asp-action="EditNews"
+                  asp-controller="News"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <!-- Hidden ID -->
+                <input type="hidden" asp-for="Id" />
+
+                <div class="row">
+
+                    <!-- Left Side -->
+                    <div class="col-lg-8">
+
+                        <!-- Title -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                News Title
+                            </label>
+
+                            <input asp-for="Title"
+                                   class="form-control form-control-lg rounded-3"
+                                   placeholder="Enter news title" />
+
+                            <span asp-validation-for="Title"
+                                  class="text-danger small">
+                            </span>
+
+                        </div>
+
+                        <!-- Short Description -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Short Description
+                            </label>
+
+                            <textarea asp-for="SortDescription"
+                                      class="form-control rounded-3"
+                                      rows="4">
+                            </textarea>
+
+                            <span asp-validation-for="SortDescription"
+                                  class="text-danger small">
+                            </span>
+
+                        </div>
+
+                        <!-- Full Description -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Full Description
+                            </label>
+
+                            <textarea asp-for="FullDescription"
+                                      class="form-control rounded-3"
+                                      rows="8">
+                            </textarea>
+
+                        </div>
+
+                    </div>
+
+                    <!-- Right Side -->
+                    <div class="col-lg-4">
+
+                        <!-- Category -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Category
+                            </label>
+
+                            <select asp-for="Category"
+                                    class="form-select rounded-3">
+
+                                <option value="">Select Category</option>
+                                <option>Politics</option>
+                                <option>Sports</option>
+                                <option>Technology</option>
+                                <option>Business</option>
+                                <option>Entertainment</option>
+                                <option>Health</option>
+                                <option>Education</option>
+
+                            </select>
+
+                        </div>
+
+                        <!-- Upload -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Change Image
+                            </label>
+
+                            <input type="file"
+                                   name="ImageFile"
+                                   class="form-control rounded-3"
+                                   onchange="previewImage(event)" />
+
+                        </div>
+
+                        <!-- Current Image -->
+                        <div class="mb-4 text-center">
+
+                            <img id="preview"
+                                 src="@Model.ImagePath"
+                                 class="img-fluid rounded-4 shadow-sm border"
+                                 style="height:220px; object-fit:cover;" />
+
+                        </div>
+
+                        <!-- Created Date -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Publish Date
+                            </label>
+
+                            <input type="text"
+                                   class="form-control rounded-3"
+                                   value="@Model.CreatedDate.ToString("dd MMM yyyy")"
+                                   readonly />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-3 mt-4">
+
+                    <a asp-controller="News"
+                       asp-action="ManageNews"
+                       class="btn btn-light border rounded-pill px-4">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-dark rounded-pill px-5 shadow-sm">
+
+                        <i class="bi bi-check-circle"></i>
+                        Update News
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <!-- Image Preview -->
+    <script>
+
+        function previewImage(event) {
+
+            var reader = new FileReader();
+
+            reader.onload = function () {
+
+                var output = document.getElementById('preview');
+
+                output.src = reader.result;
+            };
+
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+    </script>
+
+}

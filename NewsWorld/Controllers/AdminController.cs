@@ -1,7 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using NewsWorld.Data;       
 using NewsWorld.Models;     
 using System.Linq;
+using X.PagedList;
+using X.PagedList.Extensions;
 
 namespace NewsWorld.Controllers
 {
@@ -30,6 +33,7 @@ namespace NewsWorld.Controllers
 
             if (admin != null)
             {
+                TempData["loginSuccess"] = "Login Successful";
                 HttpContext.Session.SetString("AdminUser", admin.Username);
                 return RedirectToAction("Dashboard","Admin");
             }
@@ -82,6 +86,8 @@ namespace NewsWorld.Controllers
                 _context.Admins.Add(admin);
                 _context.SaveChanges();
 
+                TempData["adminSuccess"] = "Admin User Created Successfully";
+
                 return RedirectToAction("Dashboard");
             }
 
@@ -89,6 +95,7 @@ namespace NewsWorld.Controllers
             return View();
         }
         
+
         // Logout
         [HttpPost]
         public IActionResult Logout()

@@ -1,0 +1,237 @@
+﻿@model NewsWorld.Models.News
+
+@{
+    ViewData["Title"] = "Add News";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold mb-1">Add News</h2>
+            <p class="text-muted mb-0">
+                Publish latest news articles with image and category
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="Dashboard"
+           class="btn btn-outline-dark rounded-pill px-4">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+    </div>
+
+    <!-- Card -->
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+        <!-- Card Header -->
+        <div class="bg-dark text-white p-4">
+            <h4 class="mb-1 fw-bold">
+                Create News Article
+            </h4>
+
+            <small class="text-light">
+                Fill all required details
+            </small>
+        </div>
+
+        <!-- Form -->
+        <div class="card-body p-5">
+
+            <form asp-action="AddNews"
+                  asp-controller="News"
+                  method="post"
+                  enctype="multipart/form-data">
+
+                <div class="row">
+
+                    <!-- Left -->
+                    <div class="col-lg-8">
+
+                        <!-- Title -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                News Title
+                            </label>
+
+                            <input asp-for="Title"
+                                   class="form-control form-control-lg rounded-3"
+                                   placeholder="Enter news title" />
+
+                            <span asp-validation-for="Title"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Short Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Short Description
+                            </label>
+
+                            <textarea asp-for="SortDescription"
+                                      class="form-control rounded-3"
+                                      rows="4"
+                                      placeholder="Write short description">
+                            </textarea>
+
+                            <span asp-validation-for="SortDescription"
+                                  class="text-danger small">
+                            </span>
+                        </div>
+
+                        <!-- Full Description -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Full Description
+                            </label>
+
+                            <textarea asp-for="FullDescription"
+                                      class="form-control rounded-3"
+                                      rows="8"
+                                      placeholder="Write complete news content">
+                            </textarea>
+                        </div>
+
+                    </div>
+
+                    <!-- Right -->
+                    <div class="col-lg-4">
+
+                        <!-- Category -->
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Category
+                            </label>
+
+                            <select asp-for="CategoryId" class="form-select">
+                                <option value="">-- Select Category --</option>
+                                @foreach (var item in ViewBag.Categories)
+                                {
+                                    <option value="@item.Id">
+                                        @item.Category?.CategoryName
+                                    </option>
+                                }
+                            </select>
+
+                        </div>
+
+                        <!-- Upload -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Upload Image
+                            </label>
+                            <input type="file"
+                                   name="ImageFile"
+                                   class="form-control rounded-3"
+                                   onchange="previewImage(event)" />
+                        </div>
+
+                        <!--Video Link -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold">
+                                Video Link
+                            </label>
+                            <input asp-for="VideoUrl"
+                                   class="form-control rounded-3"
+                                   placeholder="Paste YouTube or video link" />
+                        </div>
+
+                        <!-- Preview -->
+                        <div class="mb-4 text-center">
+
+                            <img id="preview"
+                                 src="https://via.placeholder.com/300x220?text=News+Image"
+                                 class="img-fluid rounded-4 shadow-sm border"
+                                 style="height:220px; object-fit:cover;" />
+
+                        </div>
+
+                        <!-- Publish Date -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Publish Date
+                            </label>
+
+                            <input type="date"
+                                   class="form-control rounded-3"
+                                   value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-3 mt-4">
+
+                    <a asp-action="Index"
+                       asp-controller="News"
+                       class="btn btn-light border rounded-pill px-4">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-dark rounded-pill px-5 shadow-sm">
+                        <i class="bi bi-plus-circle"></i>
+                        Publish News
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script>
+
+        function previewImage(event) {
+
+            var reader = new FileReader();
+
+            reader.onload = function () {
+
+                var output = document.getElementById('preview');
+
+                output.src = reader.result;
+            };
+
+            reader.readAsDataURL(event.target.files[0]);
+        }
+
+    </script>
+
+    @if (TempData["newsSuccess"] != null)
+    {
+        <script>
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'News Published Successfully',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+
+        </script>
+
+        TempData.Remove("success");
+    }
+
+}

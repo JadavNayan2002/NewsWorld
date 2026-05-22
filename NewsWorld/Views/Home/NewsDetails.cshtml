@@ -1,0 +1,82 @@
+﻿@model NewsWorld.Models.News
+
+@{
+    ViewData["Title"] = "News Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-5">
+
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+        <!-- Image -->
+        @if (!string.IsNullOrEmpty(Model.ImagePath))
+        {
+            <img src="@Model.ImagePath"
+                 class="img-fluid w-100"
+                 style="height:450px; object-fit:cover;" />
+        }
+
+        <!-- Video -->
+        @if (!string.IsNullOrEmpty(Model.VideoUrl))
+        {
+            <div class="ratio ratio-16x9">
+
+                <iframe src="@Model.VideoUrl"
+                        title="News Video"
+                        allowfullscreen
+                        frameborder="0">
+                </iframe>
+
+            </div>
+        }
+
+        <!-- Body -->
+        <div class="card-body p-5">
+
+            <!-- Category -->
+            <span class="badge bg-dark px-3 py-2 mb-3">
+                @Model.Category
+            </span>
+
+            <!-- Title -->
+            <h1 class="fw-bold mb-3">
+
+                @Model.Title
+
+            </h1>
+
+            <!-- Date -->
+            <p class="text-muted">
+
+                Published on @Model.CreatedDate.ToString("dd MMM yyyy")
+
+            </p>
+
+            <hr />
+
+            <!-- Description -->
+            <div class="fs-5 lh-lg">
+
+                @Model.FullDescription
+
+            </div>
+
+            <!-- Back -->
+            <div class="mt-5">
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="btn btn-dark rounded-pill px-4">
+
+                    ← Back to News
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

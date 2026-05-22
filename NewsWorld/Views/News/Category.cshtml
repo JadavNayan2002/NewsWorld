@@ -1,0 +1,117 @@
+@model X.PagedList.IPagedList<NewsWorld.Models.Category>
+@using X.PagedList.Mvc.Core
+@using X.PagedList
+@{
+    ViewData["Title"] = "Manage News";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Heading -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold display-5 mb-2">Category Master</h1>
+            <p class="text-muted fs-4">
+                View, manage and remove categories
+            </p>
+        </div>
+
+        <a asp-controller="Admin"
+           asp-action="AddCategory"
+           class="btn btn-dark rounded-pill px-4 py-3 fw-semibold">
+
+            <i class="bi bi-plus-lg me-2"></i>
+            Add Category
+
+        </a>
+
+    </div>
+
+    <!-- Table Card -->
+    <div class="card border-0 shadow-sm rounded-5 p-4">
+
+        <div class="table-responsive">
+
+            <table class="table align-middle">
+
+                <!-- Table Header -->
+                <thead>
+
+                    <tr class="table-dark">
+
+                        <th class="py-4 fs-4">
+                            Category Name
+                        </th>
+
+                        <th class="py-4 rounded-end-4 fs-4 text-center">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <!-- Table Body -->
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <!-- Category Name -->
+                            <td class="py-4 fs-4 fw-semibold">
+                                @item.CategoryName
+                            </td>
+
+                            <!-- Action -->
+                            <td class="text-center py-4">
+                                <a asp-controller="News"
+                                   asp-action="DeleteCategory"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-danger rounded-pill px-4"
+                                   onclick="return confirm('Are you sure you want to remove this category?')">
+                                    Remove
+                                </a>
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+            <div class="d-flex justify-content-center mt-4">
+
+                @Html.PagedListPager(
+                    Model,
+                    page => Url.Action("Category", "News", new { page }),
+                    new PagedListRenderOptions
+                    {
+                        LiElementClasses = new[] { "page-item" },
+                        PageClasses = new[] { "page-link" }
+                    })
+
+            </div>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

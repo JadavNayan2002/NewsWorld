@@ -1,96 +1,152 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-100">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - NewsWorld</title>
     <script type="importmap"></script>
+    <link rel="icon" href="~/Images/logo.png" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/NewsWorld.styles.css" asp-append-version="true" />
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-3">
-            <div class="container-fluid px-4">
+<body class="h-100 d-flex flex-column bg-light overflow-hidden">
+    @{
+        var adminUser = Context.Session.GetString("AdminUser");
 
-                <!-- Logo -->
-                <a class="navbar-brand fw-bold fs-4 text-primary"
-                   asp-controller="Home" asp-action="Index">
+        // Get the name of the current controller to know which page the user is on.
+        var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+        var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+
+        //Condition: User must be admin and not on the home page (i.e. must be on admin pages)
+        bool showSidebar = adminUser != null && currentController != "Home";
+    }
+
+    <header class="flex-shrink-0">
+        <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm py-2">
+            <div class="container-fluid px-4">
+                <a class="navbar-brand fw-bold fs-4 text-primary" asp-controller="Home" asp-action="Index">
                     NewsWorld
                 </a>
 
-                <!-- Mobile Toggle -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
-                <!-- Navbar Content -->
                 <div class="collapse navbar-collapse" id="navbarContent">
-
-                    <!-- Left Menu -->
                     <ul class="navbar-nav me-auto align-items-center gap-3">
                         <li class="nav-item">
-                            <a class="fw-semibold text-dark text-decoration-none"
-                               asp-controller="Home" asp-action="Index">
+                            <a class="fw-semibold text-dark text-decoration-none" asp-controller="Home" asp-action="Index">
                                 Home
                             </a>
                         </li>
                     </ul>
 
-                    <!-- Right Menu -->
                     <ul class="navbar-nav ms-auto align-items-center gap-3">
-
-                        @{
-                            var adminUser = Context.Session.GetString("AdminUser");
-                        }
-
                         @if (adminUser != null)
                         {
-                            <!-- Dashboard Link -->
                             <li class="nav-item">
-                                <a class="fw-semibold text-dark text-decoration-none"
-                                   asp-controller="Admin" asp-action="Dashboard">
+                                <a class="fw-semibold text-dark text-decoration-none" asp-controller="Admin" asp-action="Dashboard">
                                     <i class="bi bi-speedometer2 me-1"></i> Dashboard
                                 </a>
                             </li>
-
-                            <!-- User Badge -->
                             <li class="nav-item">
-                                <span class="badge bg-light text-dark px-3 py-2 rounded-pill">
+                                <span class="badge bg-light text-dark px-3 py-2 rounded-pill border">
                                     <i class="bi bi-person-circle me-1"></i> @adminUser
                                 </span>
                             </li>
                         }
                         else
                         {
-                            <!-- Admin Login Button -->
                             <li class="nav-item">
-                                <a class="fw-semibold text-dark text-decoration-none"
-                                   asp-controller="Admin" asp-action="Index">
+                                <a class="fw-semibold text-dark text-decoration-none" asp-controller="Admin" asp-action="Index">
                                     Admin Login
                                 </a>
                             </li>
                         }
-
                     </ul>
                 </div>
             </div>
         </nav>
-    
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="container-fluid flex-grow-1 overflow-hidden">
+        <div class="row h-100">
+
+            @if (showSidebar)
+            {
+                <div class="col-md-3 col-lg-2 bg-white border-end p-3 shadow-sm h-100 d-flex flex-column justify-content-between flex-shrink-0">
+                    <div>
+                        <div class="mb-4 ps-2">
+                            <h3 class="fs-5 fw-bold m-0 text-dark">Admin Panel</h3>
+                        </div>
+
+                        <ul class="nav nav-pills flex-column gap-1">
+
+                            <li class="nav-item">
+                                <a asp-controller="News"
+                                   asp-action="Category"
+                                   class="nav-link @(currentAction == "Category" ? "active" : "text-dark") py-2 rounded-3">
+                                    <i class="bi-ui-checks-grid me-2"></i> Category
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a asp-controller="News"
+                                   asp-action="City"
+                                   class="nav-link @(currentAction == "City" ? "active" : "text-dark") py-2 rounded-3">
+                                    <i class="bi-geo-alt me-2"></i> City
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a asp-controller="News"
+                                   asp-action="ManageNews"
+                                   class="nav-link @(currentController == "News" && currentAction == "ManageNews" ? "active" : "text-dark") py-2 rounded-3">
+                                    <i class="bi bi-newspaper me-2"></i> News
+                                </a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a asp-controller="Admin"
+                                   asp-action="AddUser"
+                                   class="nav-link @(currentAction == "AddUser" ? "active" : "text-dark") py-2 rounded-3">
+                                    <i class="bi bi-person-plus-fill me-2"></i> Add User
+                                </a>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                    <div class="pt-3 border-top">
+                        <form asp-controller="Admin" asp-action="Logout" method="post" class="w-100">
+                            <button class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 py-2 rounded-3">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            <div class="@(showSidebar ? "col-md-9 col-lg-10" : "col-12") h-100 p-4" style="overflow-y: auto !important;">
+                <main role="main" class="h-100">
+                    @RenderBody()
+                </main>
+            </div>
+
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2026 - NewsWorld - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+    <footer class="bg-white border-top py-2 flex-shrink-0 shadow-sm">
+        <div class="container-fluid px-4 d-flex justify-content-between text-muted small">
+            <div>
+                &copy; 2026 NewsWorld 
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

@@ -3,26 +3,212 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="container mt-4">
-    <h2>Add Admin User</h2>
+<div class="container-fluid px-4 py-4">
 
-    <form asp-action="AddUser" asp-controller="Admin" method="post">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <div class="mb-3">
-            <label>Username</label>
-            <input name="Username" class="form-control" />
+        <div>
+            <h2 class="fw-bold mb-1">Add Admin User</h2>
+
+            <p class="text-muted mb-0">
+                Create new administrator account
+            </p>
         </div>
 
-        <div class="mb-3">
-            <label>Password</label>
-            <input name="Password" type="password" class="form-control" />
+        <a asp-controller="Admin"
+           asp-action="Dashboard"
+           class="btn btn-outline-dark rounded-pill px-4">
+
+            <i class="bi bi-arrow-left"></i> Back
+
+        </a>
+
+    </div>
+
+    <!-- Card -->
+    <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+
+        <!-- Card Header -->
+        <div class="bg-dark text-white p-4">
+
+            <h4 class="mb-1 fw-bold">
+                Create Admin Account
+            </h4>
+
+            <small class="text-light">
+                Fill all required information
+            </small>
+
         </div>
 
-        <button type="submit" class="btn btn-primary">Add Admin</button>
+        <!-- Form -->
+        <div class="card-body p-5">
 
-        @if (ViewBag.Error != null)
-        {
-            <p class="text-danger mt-2">@ViewBag.Error</p>
-        }
-    </form>
+            <form asp-action="AddUser"
+                  asp-controller="Admin"
+                  method="post">
+
+                <div class="row">
+
+                    <!-- Left Side -->
+                    <div class="col-lg-8">
+
+                        <!-- Username -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Username
+                            </label>
+
+                            <input name="Username"
+                                   class="form-control form-control-lg rounded-3"
+                                   placeholder="Enter username" />
+
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-4">
+
+                            <label class="form-label fw-semibold">
+                                Password
+                            </label>
+
+                            <div class="input-group">
+
+                                <input name="Password"
+                                       type="password"
+                                       id="password"
+                                       class="form-control form-control-lg rounded-start-3"
+                                       placeholder="Enter password" />
+
+                                <button type="button"
+                                        class="btn btn-dark"
+                                        onclick="togglePassword()">
+
+                                    <i class="bi bi-eye" id="eyeIcon"></i>
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Error -->
+                        @if (ViewBag.Error != null)
+                        {
+                            <div class="alert alert-danger rounded-3">
+
+                                @ViewBag.Error
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <!-- Right Side -->
+                    <div class="col-lg-4">
+
+                        <!-- Admin Avatar -->
+                        <div class="text-center">
+
+                            <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                                 class="img-fluid rounded-circle shadow border p-2"
+                                 width="180" />
+
+                            <h5 class="mt-3 fw-bold">
+                                Administrator
+                            </h5>
+
+                            <p class="text-muted small">
+                                Full access to dashboard and news management
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex justify-content-end gap-3 mt-4">
+
+                    <a asp-controller="Admin"
+                       asp-action="Dashboard"
+                       class="btn btn-light border rounded-pill px-4">
+
+                        Cancel
+
+                    </a>
+
+                    <button type="submit"
+                            class="btn btn-dark rounded-pill px-5 shadow-sm">
+
+                        <i class="bi bi-person-plus"></i>
+                        Add Admin
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
 </div>
+
+@section Scripts {
+
+    <!-- Password Toggle -->
+    <script>
+
+        function togglePassword() {
+
+            var password = document.getElementById("password");
+
+            var eyeIcon = document.getElementById("eyeIcon");
+
+            if (password.type === "password") {
+
+                password.type = "text";
+
+                eyeIcon.classList.remove("bi-eye");
+
+                eyeIcon.classList.add("bi-eye-slash");
+
+            }
+            else {
+
+                password.type = "password";
+
+                eyeIcon.classList.remove("bi-eye-slash");
+
+                eyeIcon.classList.add("bi-eye");
+            }
+        }
+
+    </script>
+
+    <!-- Success Popup -->
+    @if (TempData["adminSuccess"] != null)
+    {
+        <script>
+
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: '@TempData["adminSuccess"]',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true
+            });
+
+        </script>
+
+        TempData.Remove("adminSuccess");
+    }
+
+}
