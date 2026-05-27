@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using NewsWorld.Data;       
-using NewsWorld.Models;     
+using NewsWorld.Data;
+using NewsWorld.Models;
 using System.Linq;
 using X.PagedList;
 using X.PagedList.Extensions;
@@ -35,7 +35,7 @@ namespace NewsWorld.Controllers
             {
                 TempData["loginSuccess"] = "Login Successful";
                 HttpContext.Session.SetString("AdminUser", admin.Username);
-                return RedirectToAction("Dashboard","Admin");
+                return RedirectToAction("Dashboard", "Admin");
             }
 
             ViewBag.Error = "Invalid Username or Password";
@@ -43,6 +43,14 @@ namespace NewsWorld.Controllers
         }
         public IActionResult Dashboard()
         {
+            ViewBag.CategoryCount = _context.Categories.Count();
+
+            ViewBag.CityCount = _context.Cities.Count();
+
+            ViewBag.NewsCount = _context.News.Count();
+
+            ViewBag.AdminCount = _context.Admins.Count();
+
             var user = HttpContext.Session.GetString("AdminUser");
 
             if (user == null)
@@ -94,7 +102,7 @@ namespace NewsWorld.Controllers
             ViewBag.Error = "All fields are required";
             return View();
         }
-        
+
 
         // Logout
         [HttpPost]

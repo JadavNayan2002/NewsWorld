@@ -1,4 +1,4 @@
-﻿@model X.PagedList.IPagedList<NewsWorld.Models.News>
+@model X.PagedList.IPagedList<NewsWorld.Models.News>
 
 @{
     ViewData["Title"] = "Manage News";
@@ -14,6 +14,7 @@
         </div>
 
         <div class="d-flex gap-2">
+
             <a asp-controller="Admin" asp-action="Dashboard" class="btn btn-outline-dark rounded-pill px-4">
                 <i class="bi bi-arrow-left"></i> Back
             </a>
@@ -21,6 +22,7 @@
             <a asp-controller="News" asp-action="AddNews" class="btn btn-dark rounded-pill px-4">
                 + Add News
             </a>
+        
         </div>
     </div>
 
@@ -30,11 +32,12 @@
                 <table class="table align-middle table-hover">
                     <thead class="table-dark">
                         <tr>
-                            <th>ID</th>
                             <th>Image</th>
                             <th>Title</th>
                             <th>Category</th>
-                            <th width="180">Action</th>
+                            <th>City</th>
+                            <th width="100">Status</th>
+                            <th width="200">Action</th>
                         </tr>
                     </thead>
 
@@ -44,7 +47,7 @@
                             foreach (var item in Model)
                             {
                                 <tr>
-                                    <td>@item.Id</td>
+                                    @* <td>@item.Id</td> *@
 
                                     <td>
                                         <img src="@item.ImagePath"
@@ -67,34 +70,97 @@
                                     </td>
 
                                     <td>
+                                        <span class="badge bg-dark px-3 py-2">
+                                            @item.City?.CityName
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        @if (item.IsActive)
+                                        {
+                                            <div class="d-flex flex-column align-items-center gap-2">
+                                                <span class="badge bg-success px-3 py-2 rounded-pill">Active</span>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="d-flex flex-column align-items-center gap-2">
+                                                <span class="badge bg-secondary px-3 py-2 rounded-pill">
+                                                    Inactive
+                                                </span>
+                                            </div>
+                                        }
+                                    </td>
+                                    <td>
+                                        <!-- Edit Button -->
                                         <a asp-controller="News"
                                            asp-action="EditNews"
                                            asp-route-id="@item.Id"
                                            class="btn btn-primary btn-sm rounded-pill px-3">
-                                            Edit
+                                            <i class="bi bi-pencil-square me-1"></i>
                                         </a>
 
+                                        <!-- Delete Button -->
                                         <a asp-controller="News"
                                            asp-action="Delete"
                                            asp-route-id="@item.Id"
                                            class="btn btn-danger btn-sm rounded-pill px-3"
                                            onclick="return confirm('Are you sure you want to delete this news?')">
-                                            Delete
+                                            <i class="bi bi-trash3-fill me-1"></i>
                                         </a>
+
+                                        @if (item.IsActive)
+                                        {
+                                            <a asp-controller="News"
+                                               asp-action="ToggleStatus"
+                                               asp-route-id="@item.Id"
+                                               class="btn btn-success btn-sm rounded-pill">
+                                                <i class="bi bi-toggle-on"></i>
+                                                ON
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-controller="News"
+                                               asp-action="ToggleStatus"
+                                               asp-route-id="@item.Id"
+                                               class="btn btn-secondary btn-sm rounded-pill">
+                                                <i class="bi bi-toggle-off"></i>
+                                                OFF
+                                            </a>
+                                        }
+                                        
                                     </td>
+
                                 </tr>
                             }
                         }
                         else
                         {
                             <tr>
-                                <td colspan="5" class="text-center py-4">
+                                <td colspan="6" class="text-center py-4">
                                     <div class="text-muted">No news found</div>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
+
+                <ul class="pagination justify-content-center">
+
+                    @for (int i = 1; i <= Model.PageCount; i++)
+                    {
+                        <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+
+                            <a class="page-link"
+                               href="@Url.Action("ManageNews", "News", new { page = i })">
+                                @i
+                            </a>
+
+                        </li>
+                    }
+
+                </ul>
             </div>
         </div>
     </div>
@@ -115,6 +181,6 @@
             });
         </script>
 
-        TempData.Remove("newsSuccess"); 
+        TempData.Remove("newsSuccess");
     }
 }

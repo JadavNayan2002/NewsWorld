@@ -14,48 +14,176 @@
             <h2 class="fw-bold text-dark m-0">Dashboard</h2>
             <p class="text-muted small">Welcome back, system administrator. Manage your application resources.</p>
         </div>
+
+        <div class="row g-4 mt-1">
+
+            <!-- Category -->
+            <div class="col-md-5">
+
+                <div class="card border-0 shadow-lg rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <p class="text-muted mb-2 fw-semibold">
+                                    Categories
+                                </p>
+
+                                <h2 class="fw-bold mb-0">
+                                    @ViewBag.CategoryCount
+                                </h2>
+                            </div>
+
+                            <div class="bg-primary bg-opacity-10 p-3 rounded-circle">
+                                <i class="bi-ui-checks-grid me-2 text-primary fs-3"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- City -->
+            <div class="col-md-5">
+
+                <div class="card border-0 shadow-lg rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <p class="text-muted mb-2 fw-semibold">
+                                    Cities
+                                </p>
+
+                                <h2 class="fw-bold mb-0">
+                                    @ViewBag.CityCount
+                                </h2>
+                            </div>
+
+                            <div class="bg-success bg-opacity-10 p-3 rounded-circle">
+                                <i class="bi bi-geo-alt me-2 text-danger fs-3"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- News -->
+            <div class="col-md-5">
+
+                <div class="card border-0 shadow-lg rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <p class="text-muted mb-2 fw-semibold">
+                                    News Articles
+                                </p>
+
+                                <h2 class="fw-bold mb-0">
+                                    @ViewBag.NewsCount
+                                </h2>
+                            </div>
+
+                            <div class="bg-danger bg-opacity-10 p-3 rounded-circle">
+                                <i class="bi bi-newspaper text-success fs-3"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- Admin -->
+            <div class="col-md-5">
+
+                <div class="card border-0 shadow-lg rounded-4 h-100">
+
+                    <div class="card-body p-4">
+
+                        <div class="d-flex justify-content-between align-items-center">
+
+                            <div>
+                                <p class="text-muted mb-2 fw-semibold">
+                                    Admin Users
+                                </p>
+
+                                <h2 class="fw-bold mb-0">
+                                    @ViewBag.AdminCount
+                                </h2>
+                            </div>
+
+                            <div class="bg-dark bg-opacity-10 p-3 rounded-circle">
+                                <i class="bi bi-people-fill text-dark fs-3"></i>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
     }
 
-@section Scripts {
-    @if (TempData["loginSuccess"] != null)
-    {
-        <script>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '@TempData["loginSuccess"]',
-                showConfirmButton: false,
-                timer: 3000
-            });
-        </script>
-    }
+    @section Scripts {
+        @if (TempData["loginSuccess"] != null)
+        {
+            <script>
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '@TempData["loginSuccess"]',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+            </script>
+        }
 
-    @if (TempData["newsSuccess"] != null)
-    {
-        <script>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '@TempData["newsSuccess"]',
-                showConfirmButton: false,
-                timer: 3000
-            });
-        </script>
-    }
+        @if (TempData["newsSuccess"] != null)
+        {
+            <script>
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '@TempData["newsSuccess"]',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+            </script>
+        }
 
-    @if (TempData["adminSuccess"] != null)
-    {
-        <script>
-            Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: '@TempData["adminSuccess"]',
-                showConfirmButton: false,
-                timer: 3000
-            });
-        </script>
+        @if (TempData["adminSuccess"] != null)
+        {
+            <script>
+                    Swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'success',
+                        title: '@TempData["adminSuccess"]',
+                        showConfirmButton: false,
+                        timer: 3000
+                    });
+            </script>
+        }
     }
-}

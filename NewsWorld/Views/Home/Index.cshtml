@@ -1,84 +1,166 @@
-﻿@model IEnumerable<NewsWorld.Models.News>
+@model IEnumerable<NewsWorld.Models.News>
 
 @{
     ViewData["Title"] = "Latest News";
     Layout = "~/Views/Shared/_Layout.cshtml";
-}    
-    
+}
+
+<div class="container py-4">
+
     <!-- Hero -->
-    <div class="bg-dark text-white rounded-4 p-5 mb-5 shadow-lg">
-        <h1 class="display-5 fw-bold">
-            Latest News Updates
-        </h1>
-        <p class="lead mb-0">
-            Stay updated with trending news around the world
-        </p>
+    <div class="text-black rounded-5 p-5 mb-5 shadow-lg position-relative overflow-hidden">
+        <div class="position-relative z-3">
+            <span class="badge bg-danger px-3 py-2 rounded-pill uppercase mb-3 fw-bold tracking-wider">TRENDING ON NEWSWORLD</span>
+            <h1 class="display-4 mb-2">Latest News Updates</h1>
+            <p class="text-black fs-5 text-light opacity-75 mb-0">Stay updated with trending news around the world</p>
+        </div>
+        <!-- subtle light elements for a premium 3D feel -->
+        <div class="position-absolute" style="top: -100px; right: -100px; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 70%); border-radius: 50%;"></div>
     </div>
+
+    <!-- Search & Filters Bar -->
+    <form method="get" asp-controller="Home" asp-action="Index" class="row g-3 align-items-center mb-5 p-3 bg-white rounded-4 shadow-sm border border-light-subtle">
+        <!-- Search Input -->
+        <div class="col-lg-4 col-md-6">
+            <div class="input-group border rounded-pill px-3 py-1">
+                <span class="input-group-text bg-transparent border-0 pe-2"><i class="bi bi-search text-muted"></i></span>
+                <input type="text" name="search" value="@ViewBag.SearchQuery" class="form-control bg-transparent border-0 ps-1 py-1" placeholder="Search news articles..." />
+            </div>
+        </div>
+
+        <!-- Category Filter -->
+        <div class="col-lg-3 col-md-6">
+            <div class="border rounded-pill px-3 py-1">
+                <select name="categoryId" class="form-select bg-transparent border-0 py-1 cursor-pointer" onchange="this.form.submit()">
+                    <option value="">All Categories</option>
+                    @if (ViewBag.Categories != null)
+                    {
+                        foreach (var cat in (IEnumerable<NewsWorld.Models.Category>)ViewBag.Categories)
+                        {
+                            <!option value="@cat.Id" @(ViewBag.SelectedCategoryId == cat.Id ? "selected" : null)>
+                                @cat.CategoryName
+                            </!option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- City Filter -->
+        <div class="col-lg-3 col-md-6">
+            <div class="border rounded-pill px-3 py-1">
+                <select name="cityId" class="form-select bg-transparent border-0 py-1 cursor-pointer" onchange="this.form.submit()">
+                    <option value="">All Cities</option>
+                    @if (ViewBag.Cities != null)
+                    {
+                        foreach (var city in (IEnumerable<NewsWorld.Models.City>)ViewBag.Cities)
+                        {
+                            <!option value="@city.CityId" @(ViewBag.SelectedCityId == city.CityId ? "selected" : null)>
+                                @city.CityName
+                            </!option>
+                        }
+                    }
+                </select>
+            </div>
+        </div>
+
+        <!-- Filter Actions -->
+        <div class="col-lg-2 col-md-6 d-flex gap-2">
+            <button type="submit" class="btn btn-dark w-100 py-2 rounded-pill fw-semibold shadow-sm">
+                Filter
+            </button>
+            @if (ViewBag.SelectedCategoryId != null || ViewBag.SelectedCityId != null || !string.IsNullOrEmpty(ViewBag.SearchQuery))
+            {
+                <a asp-controller="Home" asp-action="Index" class="btn btn-outline-danger py-2 rounded-pill px-3 shadow-sm" title="Reset filters">
+                    <i class="bi bi-x-lg"></i>
+                </a>
+            }
+        </div>
+    </form>
 
     <!-- News Grid -->
     <div class="row">
-
-        @foreach (var item in Model)
+        @if (Model != null && Model.Any())
         {
-            <div class="col-lg-4 col-md-6 mb-4">
+            @foreach (var item in Model)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card border-0 shadow-sm rounded-4 h-100 overflow-hidden card-hover-effect">
 
-                <div class="card border-0 shadow-lg rounded-4 h-100 overflow-hidden">
-
-                    <!-- Image -->
-                    <img src="@item.ImagePath"
-                         class="card-img-top"
-                         style="height:220px; object-fit:cover;" />
-
-                    <!-- Body -->
-                    <div class="card-body d-flex flex-column">
-
-                        <!-- Category -->
-                        <div class="mb-2">
-
-                            <span class="badge bg-dark px-3 py-2">
-                                @item.Category
-                            </span>
-
+                        <!-- Image -->
+                        <div class="position-relative">
+                            <img src="@item.ImagePath"
+                                 class="card-img-top"
+                                 style="height:220px; object-fit:cover;"
+                                 alt="@item.Title" />
+                            @if (item.Category != null)
+                            {
+                                <span class="position-absolute top-0 start-0 m-3 badge bg-dark px-3 py-2 rounded-pill shadow">
+                                    @item.Category.CategoryName
+                                </span>
+                            }
                         </div>
 
-                        <!-- Title -->
-                        <h4 class="fw-bold">
+                        <!-- Body -->
+                        <div class="card-body d-flex flex-column p-4">
+                            <!-- City -->
+                            <div class="mb-2">
+                                @if (item.City != null)
+                                {
+                                    <span class="text-muted small">
+                                        <i class="bi bi-geo-alt-fill me-1 text-danger"></i> @item.City.CityName
+                                    </span>
+                                }
+                            </div>
 
-                            @item.Title
+                            <!-- Title -->
+                            <h4 class="fw-bold mb-3 lh-base text-dark">
+                                @item.Title
+                            </h4>
 
-                        </h4>
+                            <!-- Short Desc -->
+                            <p class="text-muted flex-grow-1 mb-4">
+                                @item.SortDescription
+                            </p>
 
-                        <!-- Short Desc -->
-                        <p class="text-muted flex-grow-1">
+                            <!-- Footer -->
+                            <div class="d-flex justify-content-between align-items-center mt-auto pt-3 border-top border-light">
+                                <small class="text-muted">
+                                    <i class="bi bi-calendar3 me-1"></i> @item.CreatedDate.ToString("dd MMM yyyy")
+                                </small>
 
-                            @item.SortDescription
-
-                        </p>
-
-                        <!-- Footer -->
-                        <div class="d-flex justify-content-between align-items-center mt-3">
-
-                            <small class="text-muted">
-                                @item.CreatedDate.ToString("dd MMM yyyy")
-                            </small>
-
-                            <a asp-controller="Home"
-                               asp-action="NewsDetails"
-                               asp-route-id="@item.Id"
-                               class="btn btn-dark rounded-pill px-4">
-
-                                Read More
-
-                            </a>
+                                <a asp-controller="Home"
+                                   asp-action="NewsDetails"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-outline-dark btn-sm rounded-pill px-4 fw-semibold transition-all">
+                                    Read More
+                                </a>
+                            </div>
 
                         </div>
-
                     </div>
-
                 </div>
-
+            }
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <div class="card border-0 shadow-sm rounded-5 p-5 bg-light-subtle">
+                    <div class="text-muted mb-3" style="font-size: 4rem;">
+                        <i class="bi bi-newspaper"></i>
+                    </div>
+                    <h3 class="fw-bold text-dark">No Articles Found</h3>
+                    <p class="text-muted mx-auto" style="max-width: 500px;">
+                        We couldn't find any news articles matching your search query or filter selection. Try selecting other filters or resetting them!
+                    </p>
+                    <div class="mt-3">
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-dark rounded-pill px-4 shadow-sm">
+                            Reset All Filters
+                        </a>
+                    </div>
+                </div>
             </div>
         }
-
     </div>
+</div>
 

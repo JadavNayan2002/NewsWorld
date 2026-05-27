@@ -60,6 +60,27 @@ namespace NewsWorld.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("NewsWorld.Models.City", b =>
+                {
+                    b.Property<int>("CityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CityId"));
+
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.HasKey("CityId");
+
+                    b.ToTable("Cities");
+                });
+
             modelBuilder.Entity("NewsWorld.Models.News", b =>
                 {
                     b.Property<int>("Id")
@@ -68,21 +89,23 @@ namespace NewsWorld.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Category")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int?>("CategoryId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("CityId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("FullDescription")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
                     b.Property<string>("SortDescription")
                         .IsRequired()
@@ -92,23 +115,28 @@ namespace NewsWorld.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("VideoUrl")
-                        .HasColumnType("nvarchar(max)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("CityId");
 
                     b.ToTable("News");
                 });
 
             modelBuilder.Entity("NewsWorld.Models.News", b =>
                 {
-                    b.HasOne("NewsWorld.Models.Category", "Categories")
+                    b.HasOne("NewsWorld.Models.Category", "Category")
                         .WithMany()
                         .HasForeignKey("CategoryId");
 
-                    b.Navigation("Categories");
+                    b.HasOne("NewsWorld.Models.City", "City")
+                        .WithMany()
+                        .HasForeignKey("CityId");
+
+                    b.Navigation("Category");
+
+                    b.Navigation("City");
                 });
 #pragma warning restore 612, 618
         }

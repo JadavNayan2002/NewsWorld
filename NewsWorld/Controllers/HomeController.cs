@@ -18,11 +18,38 @@ namespace NewsWorld.Controllers
         // =========================
         // HOME PAGE
         // =========================
-        public IActionResult Index()
+        public IActionResult Index(int? categoryId, int? cityId, string? search)
         {
-            var newsList = _context.News
-                                   .OrderByDescending(x => x.CreatedDate)
-                                   .ToList();
+            ViewBag.Categories = _context.Categories.OrderBy(x => x.CategoryName).ToList();
+            ViewBag.Cities = _context.Cities.Where(x => x.IsActive).OrderBy(x => x.CityName).ToList();
+
+            ViewBag.SelectedCategoryId = categoryId;
+            ViewBag.SelectedCityId = cityId;
+            ViewBag.SearchQuery = search;
+
+            var query = _context.News
+                               .Include(x => x.Category)
+                               .Include(x => x.City)
+                               .Where(x => x.IsActive == true);
+
+            if (categoryId.HasValue)
+            {
+                query = query.Where(x => x.CategoryId == categoryId.Value);
+            }
+
+            if (cityId.HasValue)
+            {
+                query = query.Where(x => x.CityId == cityId.Value);
+            }
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Title!.Contains(search) ||
+                                         x.SortDescription!.Contains(search) ||
+                                         x.FullDescription!.Contains(search));
+            }
+
+            var newsList = query.OrderByDescending(x => x.CreatedDate).ToList();
 
             return View(newsList);
         }
@@ -33,6 +60,8 @@ namespace NewsWorld.Controllers
         public IActionResult NewsDetails(int id)
         {
             var news = _context.News
+                               .Include(x => x.Category)
+                               .Include(x => x.City)
                                .FirstOrDefault(x => x.Id == id);
 
             if (news == null)
@@ -46,12 +75,13 @@ namespace NewsWorld.Controllers
         // =========================
         // CATEGORY PAGE
         // =========================
-       
+
 
         public IActionResult Category(string id)
         {
             var categoryNews = _context.News
                                        .Include(x => x.Category)
+                                       .Include(x => x.City)
                                        .Where(x => x.Category!.CategoryName == id)
                                        .OrderByDescending(x => x.CreatedDate)
                                        .ToList();
@@ -61,10 +91,10 @@ namespace NewsWorld.Controllers
             return View(categoryNews);
         }
 
-    // =========================
-    // PRIVACY
-    // =========================
-    public IActionResult Privacy()
+        // =========================
+        // PRIVACY
+        // =========================
+        public IActionResult Privacy()
         {
             return View();
         }

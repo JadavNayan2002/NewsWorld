@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace NewsWorld.Models
 {
@@ -9,5 +9,6 @@ namespace NewsWorld.Models
 
         [Required]
         public string? CategoryName { get; set; }
+        public ICollection<News>? News { get; set; }
     }
 }

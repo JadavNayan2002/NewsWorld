@@ -3,49 +3,49 @@
 
 // Write your JavaScript code.
 
-    @if (TempData["loginSuccess"] != null) {
-        <script>
+@if (TempData["loginSuccess"] != null) {
+    <script>
 
-            Swal.fire({
-                toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: '@TempData["loginSuccess"]',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: '@TempData["loginSuccess"]',
+        showConfirmButton: false,
+        timer: 3000
                     });
 
-        </script>
-    }
+    </script>
+}
 
-    @if (TempData["newsSuccess"] != null) {
-        <script>
+@if (TempData["newsSuccess"] != null) {
+    <script>
 
-            Swal.fire({
-                toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: '@TempData["newsSuccess"]',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: '@TempData["newsSuccess"]',
+        showConfirmButton: false,
+        timer: 3000
                     });
 
-        </script>
-    }
+    </script>
+}
 
-    @if (TempData["adminSuccess"] != null) {
-        <script>
+@if (TempData["adminSuccess"] != null) {
+    <script>
 
-            Swal.fire({
-                toast: true,
-            position: 'top-end',
-            icon: 'success',
-            title: '@TempData["adminSuccess"]',
-            showConfirmButton: false,
-            timer: 3000
+        Swal.fire({
+            toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: '@TempData["adminSuccess"]',
+        showConfirmButton: false,
+        timer: 3000
                     });
 
-        </script>
+    </script>
 }
 
 // Sidebar active menu
@@ -65,4 +65,10 @@ menuItems.forEach(item => {
     });
 
 });
+
+// CK Editor
+
+
+
+
 

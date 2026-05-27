@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace NewsWorld.Models
 {
@@ -18,7 +19,7 @@ namespace NewsWorld.Models
 
         public string? ImagePath { get; set; }
 
-        public string? VideoUrl { get; set; }
+        //public string? VideoUrl { get; set; }
 
         public DateTime CreatedDate { get; set; } = DateTime.Now;
 
@@ -27,5 +28,11 @@ namespace NewsWorld.Models
 
         [ForeignKey("CategoryId")]
         public Category? Category { get; set; }
+
+        public bool IsActive { get; set; } = true;
+
+        public int? CityId { get; set; }
+
+        public City? City{ get; set; }
     }
 }

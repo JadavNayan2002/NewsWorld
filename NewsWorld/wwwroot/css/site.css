@@ -23,16 +23,16 @@ html, body {
     transition: all 0.2s ease;
 }
 
-    .sidebar-menu .nav-link:hover {
-        background-color: #f1f5f9;
-        color: #0f172a !important;
-    }
+.sidebar-menu .nav-link:hover {
+   background-color: #f1f5f9;
+   color: #0f172a !important;
+}
 
-    .sidebar-menu .nav-link.active,
-    .sidebar-menu .nav-link:active {
-        background-color: #0d6efd !important;
-        color: white !important;
-    }
+.sidebar-menu .nav-link.active,
+.sidebar-menu .nav-link:active {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
 
 /* Table layout constraint mechanics to guarantee no horizontal breaking */
 .table-responsive {
@@ -56,4 +56,19 @@ html, body {
     .h-100 {
         height: auto !important;
     }
+}
+
+// Home page card hover effects
+
+.card-hover-effect {
+    transition: transform 0.10s ease, box-shadow 0.10s ease;
+}
+
+.card-hover-effect:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 1rem 3rem rgba(0,0,0,0.1) !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
 }

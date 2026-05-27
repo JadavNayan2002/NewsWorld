@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using NewsWorld.Data;
 using NewsWorld.Models;
+using X.PagedList;
 using X.PagedList.Extensions;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace NewsWorld.Controllers
 {
@@ -19,16 +21,19 @@ namespace NewsWorld.Controllers
         }
 
         // NEWS LIST
-        public IActionResult Index()
-        {
-            var newsList = _context.News
-                                   .OrderByDescending(x => x.CreatedDate)
-                                   .ToList();
-            var news = _context.News
-                   .Include(x => x.Category)
-                   .ToList();
 
-            return View(newsList);
+        public async Task<IActionResult> Index(int? page)
+        {
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
+
+            var news = await _context.News
+                .Include(x => x.Category)
+                .Include(x => x.City)
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
+
+            return View(news.ToPagedList(pageNumber, pageSize));
         }
 
         // =========================
@@ -39,6 +44,7 @@ namespace NewsWorld.Controllers
         public IActionResult AddNews()
         {
             ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.CityList = new SelectList(_context.Cities, "CityId", "CityName");
             return View();
         }
 
@@ -80,8 +86,13 @@ namespace NewsWorld.Controllers
                 return RedirectToAction("Dashboard", "Admin");
             }
 
-            // IMPORTANT
             ViewBag.Categories = _context.Categories.ToList();
+
+            ViewBag.CityList = new SelectList(
+                _context.Cities,
+                "CityId",
+                "CityName"
+            );
 
             return View(news);
         }
@@ -89,7 +100,10 @@ namespace NewsWorld.Controllers
         // NEWS DETAILS
         public IActionResult Details(int id)
         {
-            var news = _context.News.FirstOrDefault(x => x.Id == id);
+            var news = _context.News
+                .Include(x => x.Category)
+                .Include(x => x.City)
+                .FirstOrDefault(x => x.Id == id);
 
             if (news == null)
             {
@@ -102,18 +116,18 @@ namespace NewsWorld.Controllers
         // =========================
         // MANAGE NEWS
         // =========================
-        public IActionResult ManageNews(int? page)
+        public async Task<IActionResult> ManageNews(int? page)
         {
             int pageSize = 5;
             int pageNumber = page ?? 1;
 
-            // Fetch the news, JOIN the category data, and paginate it
-            var newsList = _context.News
-                                   .Include(n => n.Category) // <--- THIS LOADS THE CATEGORY NAMES
-                                   .OrderByDescending(x => x.Id)
-                                   .ToPagedList(pageNumber, pageSize);
+            var news = await _context.News
+                .Include(x => x.Category)
+                .Include(x => x.City)
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
 
-            return View(newsList);
+            return View(news.ToPagedList(pageNumber, pageSize));
         }
 
         // EDIT NEWS (GET)
@@ -127,6 +141,8 @@ namespace NewsWorld.Controllers
                 return NotFound();
             }
 
+            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.CityList = new SelectList(_context.Cities, "CityId", "CityName", news.CityId);
             return View(news);
         }
 
@@ -147,7 +163,8 @@ namespace NewsWorld.Controllers
                 existingNews.Title = news.Title;
                 existingNews.SortDescription = news.SortDescription;
                 existingNews.FullDescription = news.FullDescription;
-                existingNews.Category = news.Category;
+                existingNews.CategoryId = news.CategoryId;
+                existingNews.CityId = news.CityId;
 
                 // Update Image
                 if (ImageFile != null)
@@ -174,6 +191,8 @@ namespace NewsWorld.Controllers
                 return RedirectToAction("ManageNews");
             }
 
+            ViewBag.Categories = _context.Categories.ToList();
+            ViewBag.CityList = new SelectList(_context.Cities, "CityId", "CityName", news.CityId);
             return View(news);
         }
 
@@ -210,73 +229,19 @@ namespace NewsWorld.Controllers
             return RedirectToAction("ManageNews");
         }
 
-        // =========================
-        // CATEGORY
-        // =========================
-
-        // Catergory List with Pagination
-        public IActionResult Category(int? page)
+        // ACTIVE/INACTIVE NEWS STATUS TOGGLE
+        public IActionResult ToggleStatus(int id)
         {
-            int pageSize = 5;
-            int pageNumber = page ?? 1;
+            var news = _context.News.Find(id);
 
-            // 1. You fetched the data into a variable named 'news'
-            var categories = _context.Categories
-                             .OrderBy(x => x.Id)
-                             .ToPagedList(pageNumber, pageSize);
-
-            return View(categories);
-        }
-
-        [HttpGet]
-        public IActionResult AddCategory()
-        {
-            return View();
-        }
-
-        // ADD CATEGORY
-        [HttpPost]
-        public IActionResult AddCategory(Category category)
-        {
-            if (ModelState.IsValid)
+            if (news != null)
             {
-                _context.Categories.Add(category);
+                news.IsActive = !news.IsActive;
+
                 _context.SaveChanges();
-
-                TempData["Success"] = "Category Added Successfully";
-
-                return RedirectToAction("Category");
             }
 
-            return View(category);
-        }
-
-        //DELETE CATEGORY
-        public IActionResult DeleteCategory(int id)
-        {
-            var category = _context.Categories.Find(id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-
-            // Check category used in news
-            bool isUsed = _context.News.Any(x => x.CategoryId == id);
-
-            if (isUsed)
-            {
-                TempData["Error"] = "Category is already used in News.";
-
-                return RedirectToAction("Category");
-            }
-
-            _context.Categories.Remove(category);
-            _context.SaveChanges();
-
-            TempData["Success"] = "Category Removed Successfully";
-
-            return RedirectToAction("Category");
+            return RedirectToAction("ManageNews");
         }
     }
 }

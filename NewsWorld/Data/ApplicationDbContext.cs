@@ -13,5 +13,6 @@ namespace NewsWorld.Data
         public DbSet<Admin> Admins { get; set; }
         public DbSet<News> News { get; set; }
         public DbSet<Category> Categories { get; set; }
+        public DbSet<City> Cities { get; set; }
     }
 }

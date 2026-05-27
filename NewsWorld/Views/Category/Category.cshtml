@@ -1,0 +1,131 @@
+@model X.PagedList.IPagedList<NewsWorld.Models.Category>
+@using X.PagedList.Mvc.Core
+@using X.PagedList
+@{
+    ViewData["Title"] = "Manage News";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid px-4 py-4">
+
+    <!-- Heading -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="fw-bold display-5 mb-2">Category Master</h1>
+            <p class="text-muted fs-4">
+                View, manage and remove categories
+            </p>
+        </div>
+
+        <a asp-controller="Category"
+           asp-action="AddCategory"
+           class="btn btn-dark rounded-pill px-4 py-3 fw-semibold">
+
+            <i class="bi bi-plus-lg me-2"></i>
+            Add Category
+
+        </a>
+
+    </div>
+
+    <!-- Table Card -->
+    <div class="card border-0 shadow-sm rounded-5 p-4">
+
+        <div class="table-responsive">
+
+            <table class="table align-middle table-hover">
+
+                <!-- Table Header -->
+                <thead>
+
+                    <tr class="table-dark">
+
+                        <th class=" fs-4">
+                            Category Name
+                        </th>
+
+                        <th class="rounded-end-4 fs-4 text-center">
+                            Action
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+                <!-- Table Body -->
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <!-- Category Name -->
+                            <td class="fw-semibold">
+                                @item.CategoryName
+                            </td>
+
+                            <!-- Action -->
+                            <td class="text-center">
+
+                                <!-- Edit Button -->
+                                <a asp-controller="Category"
+                                   asp-action="EditCategory"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-primary rounded-pill px-4 me-2">
+
+                                    <i class="bi bi-pencil-square me-1"></i>
+                                </a>
+
+                                <!-- Delete Button -->
+                                <a asp-controller="Category"
+                                   asp-action="DeleteCategory"
+                                   asp-route-id="@item.Id"
+                                   class="btn btn-danger rounded-pill px-4"
+                                   onclick="return confirm('Are you sure you want to remove this category?')">
+
+                                    <i class="bi bi-trash me-1"></i>
+                                </a>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+            <ul class="pagination justify-content-center">
+
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link"
+                           href="@Url.Action("Category", new { page = i })">
+                            @i
+                        </a>
+                    </li>
+                }
+
+            </ul>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            @if (TempData["Success"] != null)
+            {
+                <div class="alert alert-success">
+                    @TempData["Success"]
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>

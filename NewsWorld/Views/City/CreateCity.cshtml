@@ -1,0 +1,59 @@
+﻿@model NewsWorld.Models.City
+
+@{
+    ViewData["Title"] = "Add City";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container py-4">
+
+    <div class="card shadow border-0 rounded-4">
+        <div class="card-body p-4">
+
+            <h3 class="fw-bold mb-4">Add City</h3>
+
+            <form asp-action="CreateCity" method="post">
+
+                <div class="mb-3">
+                    <label asp-for="CityName" class="form-label">City Name</label>
+
+                    <input asp-for="CityName"
+                           class="form-control rounded-pill" />
+
+                    <span asp-validation-for="CityName"
+                          class="text-danger"></span>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary rounded-pill px-4">
+                    Save City
+                </button>
+
+                <a asp-action="Index" class="btn btn-secondary rounded-pill px-4">
+                    Back
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["error"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

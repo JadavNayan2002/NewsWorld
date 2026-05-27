@@ -1,4 +1,4 @@
-﻿@model NewsWorld.Models.News
+@model NewsWorld.Models.News
 
 @{
     ViewData["Title"] = "News Details";
@@ -18,7 +18,7 @@
         }
 
         <!-- Video -->
-        @if (!string.IsNullOrEmpty(Model.VideoUrl))
+        @* @if (!string.IsNullOrEmpty(Model.VideoUrl))
         {
             <div class="ratio ratio-16x9">
 
@@ -29,14 +29,14 @@
                 </iframe>
 
             </div>
-        }
+        } *@
 
         <!-- Body -->
         <div class="card-body p-5">
 
             <!-- Category -->
             <span class="badge bg-dark px-3 py-2 mb-3">
-                @Model.Category
+                @Model.Category?.CategoryName
             </span>
 
             <!-- Title -->
@@ -58,7 +58,7 @@
             <!-- Description -->
             <div class="fs-5 lh-lg">
 
-                @Model.FullDescription
+                @Html.Raw(@Model.FullDescription)
 
             </div>
 
@@ -80,3 +80,23 @@
     </div>
 
 </div>
+
+@section Scripts {
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+
+    <script>
+
+        ClassicEditor
+        .create(document.querySelector('#editor'))
+        .catch(error => {
+        console.error(error);
+        });
+
+    </script>
+
+}
