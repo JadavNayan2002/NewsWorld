@@ -1,10 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using NewsWorld.Data;
 using NewsWorld.Models;
-using X.PagedList;
 using X.PagedList.Extensions;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Linq;
 
 namespace NewsWorld.Controllers
 {

@@ -1,0 +1,52 @@
+﻿@model Admin
+
+@{
+    ViewData["Title"] = "Edit Admin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container mt-4">
+
+    <div class="card shadow">
+
+        <div class="card-header bg-dark text-white">
+            <h4>Edit Admin</h4>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="EditAdmin" method="post">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="mb-3">
+                    <label class="form-label">Username</label>
+
+                    <input asp-for="Username"
+                           class="form-control" />
+                </div>
+
+                @if (ViewBag.Error != null)
+                {
+                    <div class="alert alert-danger">
+                        @ViewBag.Error
+                    </div>
+                }
+
+                <button type="submit"
+                        class="btn btn-dark">
+                    Update Admin
+                </button>
+
+                <a asp-action="Users"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
