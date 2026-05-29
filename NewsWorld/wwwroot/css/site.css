@@ -58,7 +58,7 @@ html, body {
     }
 }
 
-// Home page card hover effects
+/* Home page card hover effects */
 
 .card-hover-effect {
     transition: transform 0.10s ease, box-shadow 0.10s ease;

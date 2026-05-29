@@ -18,19 +18,25 @@ namespace NewsWorld.Controllers
         // =========================
         // HOME PAGE
         // =========================
-        public IActionResult Index(int? categoryId, int? cityId, string? search)
+        public async Task<IActionResult> Index(int? categoryId, int? cityId, string? search)
         {
-            ViewBag.Categories = _context.Categories.OrderBy(x => x.CategoryName).ToList();
-            ViewBag.Cities = _context.Cities.Where(x => x.IsActive).OrderBy(x => x.CityName).ToList();
+            ViewBag.Categories = await _context.Categories
+                                               .OrderBy(x => x.CategoryName)
+                                               .ToListAsync();
+
+            ViewBag.Cities = await _context.Cities
+                                           .Where(x => x.IsActive)
+                                           .OrderBy(x => x.CityName)
+                                           .ToListAsync();
 
             ViewBag.SelectedCategoryId = categoryId;
             ViewBag.SelectedCityId = cityId;
             ViewBag.SearchQuery = search;
 
             var query = _context.News
-                               .Include(x => x.Category)
-                               .Include(x => x.City)
-                               .Where(x => x.IsActive == true);
+                                .Include(x => x.Category)
+                                .Include(x => x.City)
+                                .Where(x => x.IsActive);
 
             if (categoryId.HasValue)
             {
@@ -46,10 +52,14 @@ namespace NewsWorld.Controllers
             {
                 query = query.Where(x => x.Title!.Contains(search) ||
                                          x.SortDescription!.Contains(search) ||
-                                         x.FullDescription!.Contains(search));
+                                         x.FullDescription!.Contains(search)||
+                                         x.City!.CityName.Contains(search) ||
+                                         x.Category!.CategoryName.Contains(search));
             }
 
-            var newsList = query.OrderByDescending(x => x.CreatedDate).ToList();
+            var newsList = await query
+                                    .OrderByDescending(x => x.CreatedDate)
+                                    .ToListAsync();
 
             return View(newsList);
         }
@@ -57,12 +67,12 @@ namespace NewsWorld.Controllers
         // =========================
         // NEWS DETAILS
         // =========================
-        public IActionResult NewsDetails(int id)
+        public async Task<IActionResult> NewsDetails(int id)
         {
-            var news = _context.News
-                               .Include(x => x.Category)
-                               .Include(x => x.City)
-                               .FirstOrDefault(x => x.Id == id);
+            var news = await _context.News
+                                     .Include(x => x.Category)
+                                     .Include(x => x.City)
+                                     .FirstOrDefaultAsync(x => x.Id == id);
 
             if (news == null)
             {
@@ -75,28 +85,18 @@ namespace NewsWorld.Controllers
         // =========================
         // CATEGORY PAGE
         // =========================
-
-
-        public IActionResult Category(string id)
+        public async Task<IActionResult> Category(string id)
         {
-            var categoryNews = _context.News
-                                       .Include(x => x.Category)
-                                       .Include(x => x.City)
-                                       .Where(x => x.Category!.CategoryName == id)
-                                       .OrderByDescending(x => x.CreatedDate)
-                                       .ToList();
+            var categoryNews = await _context.News
+                                             .Include(x => x.Category)
+                                             .Include(x => x.City)
+                                             .Where(x => x.Category!.CategoryName == id)
+                                             .OrderByDescending(x => x.CreatedDate)
+                                             .ToListAsync();
 
             ViewBag.Category = id;
 
             return View(categoryNews);
-        }
-
-        // =========================
-        // PRIVACY
-        // =========================
-        public IActionResult Privacy()
-        {
-            return View();
         }
 
         // =========================

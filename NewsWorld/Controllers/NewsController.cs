@@ -39,7 +39,6 @@ namespace NewsWorld.Controllers
         // =========================
         // ADD NEWS
         // =========================
-        // ADD NEWS (GET)
         [HttpGet]
         public IActionResult AddNews()
         {
@@ -51,7 +50,7 @@ namespace NewsWorld.Controllers
         // ADD NEWS (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddNews(News news, IFormFile ImageFile)
+        public async Task<IActionResult> AddNews(News news, IFormFile ImageFile)
         {
             if (ModelState.IsValid)
             {
@@ -79,7 +78,7 @@ namespace NewsWorld.Controllers
                 }
 
                 _context.News.Add(news);
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 TempData["newsSuccess"] = "News Published Successfully";
 
@@ -98,12 +97,12 @@ namespace NewsWorld.Controllers
         }
 
         // NEWS DETAILS
-        public IActionResult Details(int id)
+        public async Task<IActionResult> Details(int id)
         {
-            var news = _context.News
-                .Include(x => x.Category)
-                .Include(x => x.City)
-                .FirstOrDefault(x => x.Id == id);
+            var news = await _context.News
+            .Include(x => x.Category)
+            .Include(x => x.City)
+            .FirstOrDefaultAsync(x => x.Id == id);
 
             if (news == null)
             {
@@ -132,9 +131,9 @@ namespace NewsWorld.Controllers
 
         // EDIT NEWS (GET)
         [HttpGet]
-        public IActionResult EditNews(int id)
+        public async Task<IActionResult> EditNews(int id)
         {
-            var news = _context.News.Find(id);
+            var news = await _context.News.FindAsync(id);
 
             if (news == null)
             {
@@ -149,11 +148,11 @@ namespace NewsWorld.Controllers
         // EDIT NEWS (POST)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult EditNews(News news, IFormFile? ImageFile)
+        public async Task<IActionResult> EditNews(News news, IFormFile? ImageFile)
         {
             if (ModelState.IsValid)
             {
-                var existingNews = _context.News.Find(news.Id);
+                var existingNews = await _context.News.FindAsync(news.Id);
 
                 if (existingNews == null)
                 {
@@ -184,7 +183,7 @@ namespace NewsWorld.Controllers
                     existingNews.ImagePath = "/newsimages/" + fileName;
                 }
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
 
                 TempData["newsSuccess"] = "News Updated Successfully";
 
@@ -199,9 +198,9 @@ namespace NewsWorld.Controllers
         // =========================
         // DELETE NEWS
         // =========================
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var news = _context.News.Find(id);
+            var news = await _context.News.FindAsync(id);
 
             if (news == null)
             {
@@ -222,7 +221,7 @@ namespace NewsWorld.Controllers
             }
 
             _context.News.Remove(news);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             TempData["newsSuccess"] = "News Deleted Successfully";
 
@@ -230,15 +229,15 @@ namespace NewsWorld.Controllers
         }
 
         // ACTIVE/INACTIVE NEWS STATUS TOGGLE
-        public IActionResult ToggleStatus(int id)
+        public async Task<IActionResult> ToggleStatus(int id)
         {
-            var news = _context.News.Find(id);
+            var news = await _context.News.FindAsync(id);
 
             if (news != null)
             {
                 news.IsActive = !news.IsActive;
 
-                _context.SaveChanges();
+                await _context.SaveChangesAsync();
             }
 
             return RedirectToAction("ManageNews");

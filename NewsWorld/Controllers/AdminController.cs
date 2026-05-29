@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NewsWorld.Data;
+using X.PagedList;
+using X.PagedList.Extensions;
+using Microsoft.EntityFrameworkCore;
+
 namespace NewsWorld.Controllers
 {
     public class AdminController : Controller
@@ -20,10 +24,10 @@ namespace NewsWorld.Controllers
 
         // POST: Admin/Login
         [HttpPost]
-        public IActionResult Login(string Username, string Password)
+        public async Task<IActionResult> Login(string Username, string Password)
         {
-            var admin = _context.Admins
-                .FirstOrDefault(a => a.Username == Username && a.Password == Password);
+            var admin = await _context.Admins
+                .FirstOrDefaultAsync(a => a.Username == Username && a.Password == Password);
 
             if (admin != null)
             {
@@ -37,7 +41,7 @@ namespace NewsWorld.Controllers
         }
 
         //If the account has been deleted, clear the session and redirect to login.
-        public IActionResult Dashboard()
+        public async Task<IActionResult> Dashboard()
         {
             var user = HttpContext.Session.GetString("AdminUser");
 
@@ -47,7 +51,7 @@ namespace NewsWorld.Controllers
             }
 
             // Check whether the admin still exists
-            var adminExists = _context.Admins.Any(a => a.Username == user);
+            var adminExists = await _context.Admins.AnyAsync(a => a.Username == user);
 
             if (!adminExists)
             {
@@ -55,10 +59,10 @@ namespace NewsWorld.Controllers
                 return RedirectToAction("Login", "Admin");
             }
 
-            ViewBag.CategoryCount = _context.Categories.Count();
-            ViewBag.CityCount = _context.Cities.Count();
-            ViewBag.NewsCount = _context.News.Count();
-            ViewBag.AdminCount = _context.Admins.Count();
+            ViewBag.CategoryCount = await _context.Categories.CountAsync();
+            ViewBag.CityCount = await _context.Cities.CountAsync();
+            ViewBag.NewsCount = await _context.News.CountAsync();
+            ViewBag.AdminCount = await _context.Admins.CountAsync();
 
             return View();
         }
@@ -75,6 +79,19 @@ namespace NewsWorld.Controllers
             return RedirectToAction("Login");
         }
 
+        // Admin Users List
+        public IActionResult Users(int? page)
+        {
+            int pageSize = 5;
+            int pageNumber = page ?? 1;
+
+            var admins = _context.Admins
+                                 .OrderBy(a => a.Id)
+                                 .ToPagedList(pageNumber, pageSize);
+
+            return View(admins);
+        }
+
         // GET: AdminUser Add User
         public IActionResult AddUser()
         {
@@ -83,11 +100,10 @@ namespace NewsWorld.Controllers
 
         // POST: AdminUser Add User
         [HttpPost]
-        public IActionResult AddUser(string Username, string Password)
+        public async Task<IActionResult> AddUser(string Username, string Password)
         {
-            // Check if username already exists
-            var existingUser = _context.Admins
-                                       .FirstOrDefault(x => x.Username == Username);
+            var existingUser = await _context.Admins
+                                 .FirstOrDefaultAsync(x => x.Username == Username);
 
             if (existingUser != null)
             {
@@ -98,11 +114,11 @@ namespace NewsWorld.Controllers
             var admin = new Admin
             {
                 Username = Username,
-                Password = Password // Hash password in production
+                Password = Password 
             };
 
             _context.Admins.Add(admin);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             TempData["adminSuccess"] = "Admin added successfully.";
 
@@ -124,9 +140,10 @@ namespace NewsWorld.Controllers
         }
 
         [HttpPost]
-        public IActionResult EditAdmin(Admin model)
+        public async Task<IActionResult> EditAdmin(Admin model)
         {
-            var admin = _context.Admins.FirstOrDefault(a => a.Id == model.Id);
+            var admin = await _context.Admins
+                          .FirstOrDefaultAsync(a => a.Id == model.Id);
 
             if (admin == null)
             {
@@ -134,9 +151,9 @@ namespace NewsWorld.Controllers
             }
 
             // Check for duplicate username
-            bool exists = _context.Admins.Any(a =>
-                a.Username == model.Username &&
-                a.Id != model.Id);
+            bool exists = await _context.Admins.AnyAsync(a =>
+                            a.Username == model.Username &&
+                            a.Id != model.Id);
 
             if (exists)
             {
@@ -148,7 +165,7 @@ namespace NewsWorld.Controllers
 
             admin.Username = model.Username;
 
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             var currentUser = HttpContext.Session.GetString("AdminUser");
 
@@ -163,33 +180,18 @@ namespace NewsWorld.Controllers
             return RedirectToAction("Users");
         }
 
-
-        // Logout
-        [HttpPost]
-        public IActionResult Logout()
-        {
-            HttpContext.Session.Clear();
-            return RedirectToAction("Login");
-        }
-
-        // Admin Users List
-        public IActionResult Users()
-        {
-            var admins = _context.Admins.ToList();
-            return View(admins);
-        }
-
         //Delete Admin User
         [HttpPost]
-        public IActionResult DeleteAdmin(int id)
+        public async Task<IActionResult> DeleteAdmin(int id)
         {
-            var admin = _context.Admins.FirstOrDefault(x => x.Id == id);
+            var admin = await _context.Admins
+                          .FirstOrDefaultAsync(x => x.Id == id);
 
             if (admin == null)
                 return NotFound();
 
             // Prevent deleting the last admin account
-            if (_context.Admins.Count() == 1)
+            if (await _context.Admins.CountAsync() == 1)
             {
                 TempData["Error"] = "Cannot delete the last administrator account.";
                 return RedirectToAction("Users");
@@ -200,7 +202,7 @@ namespace NewsWorld.Controllers
             bool deletingCurrentUser = admin.Username == currentUser;
 
             _context.Admins.Remove(admin);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
 
             if (deletingCurrentUser)
             {
@@ -210,6 +212,14 @@ namespace NewsWorld.Controllers
 
             TempData["Success"] = "Admin deleted successfully.";
             return RedirectToAction("Users");
+        }
+
+        // Logout
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Login");
         }
 
     }

@@ -1,4 +1,6 @@
-﻿@model IEnumerable<Admin>
+﻿@model X.PagedList.IPagedList<Admin>
+@using X.PagedList
+@using X.PagedList.Mvc.Core
 
 @{
     ViewData["Title"] = "Admin Users";
@@ -93,6 +95,17 @@
                         </tbody>
 
                     </table>
+
+                    <div class="d-flex justify-content-center mt-4">
+                        @Html.PagedListPager(
+                            Model,
+                            page => Url.Action("Users", new { page }),
+                            new PagedListRenderOptions
+                            {
+                                LiElementClasses = new[] { "page-item" },
+                                PageClasses = new[] { "page-link" }
+                            })
+                    </div>
 
                 </div>
             }
